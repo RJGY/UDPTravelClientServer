@@ -22,3 +22,5 @@ Current time of the day using Date - 12 hour format: 09/03/2021 17:33:33
 Current time of the day using Date - 12 hour format: 09/03/2021 17:33:35
 Current time of the day using Date - 12 hour format: 09/03/2021 17:33:37
 Current time of the day using Date - 12 hour format: 09/03/2021 17:33:39
+Current time of the day using Date - 12 hour format: 10/03/2021 00:12:45
+Current time of the day using Date - 12 hour format: 10/03/2021 00:12:55

@@ -18,36 +18,26 @@ import java.util.Timer;
 public class WriteToFile extends TimerTask {
 
     private PrintWriter printer = null;
-    private String binaryFileName;
+    private static final String binaryFileName = "Member.dat";
     private ArrayList<Customer> customerList;
     private ObjectOutputStream out;
-    private static final int INTERVAL = 10000; // Print to file every 2 minutes 120000 milliseconds.
-    private static final int START_INTERVAL = 1000; // Start after 1 second.
+    public static final int INTERVAL = 10000; // Print to file every 2 minutes 120000 milliseconds.
+    public static final int START_INTERVAL = 1000; // Start after 1 second.
     private Timer tm = new Timer(); // Using timer from util package
     
     public WriteToFile(ArrayList<Customer> customerList) {
         this.customerList = customerList;
-        
-        // Schedule timer to write to file after start interval and repeat every interval
-        tm.schedule(new WriteToFile(customerList), START_INTERVAL, INTERVAL);
     }
     
-    //this method is called automatically when the task is scheduled
+    // This method is called automatically when the task is scheduled
     @Override
     public void run() {
         try {
             // assign PrintWriter instance to a file names SystemRecord.txt to be opened in append mode
-            printer = new PrintWriter(new FileOutputStream(new File("SystemRecord.txt"), true )); /* append = true */
-            //Read system date
-            Date date = new Date();
-            //Date formatter
-            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-            //foramtt date to the given mask
-            String dateString = formatter.format(date);
-            // Display on the screen
-            System.out.println( "Current time of the day using Date - 12 hour format: " + dateString);
-            //Write the same contents to the file
-            printer.println("Current time of the day using Date - 12 hour format: " + dateString);
+            printer = new PrintWriter(new FileOutputStream(new File(binaryFileName), true )); /* append = true */
+
+            // TODO: ADD WRITING TO BINARY FILE.
+            
             //close the file
             printer.close();
             // Assign printer to null for garbage collection.

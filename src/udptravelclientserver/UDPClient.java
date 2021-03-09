@@ -46,14 +46,33 @@ public class UDPClient
             byte [] m = new byte[1000];
             // variable to hold user input.
             String input = ""; 
+            // variable to hold in or out
+            String travelMode = "";
+            // Variable to loop
+            Boolean loop = true;
             // keep chatting until terminiated with 3 from the user
             while(true) {
-                System.out.println("****Travel Kiosk****\n\t1:IN\n\t2:OUT\n\t3:EXIT\nEnter: ");
-                input = scanner.nextLine();
-                // Check if user breaking out of loop
-                if(input.equalsIgnoreCase("3")) {
-                    break;
+                while(true) {
+                    System.out.println("****Travel Kiosk****\n\t1:IN\n\t2:OUT\n\t3:EXIT\nEnter: ");
+                    input = scanner.nextLine();
+                    // Check if user breaking out of loop
+                    if (input.equalsIgnoreCase("1")) {
+                        travelMode = "IN";
+                        break;
+                    }
+                    else if(input.equalsIgnoreCase("2")) {
+                        travelMode = "OUT";
+                        break;
+                    }
+                    else if(input.equalsIgnoreCase("3")) {
+                        loop = false;
+                        break;
+                    }
+                    
                 }
+                // break out of loop if 3 is pressed
+                if (!loop) break;
+                
                 // Variable to mutate and hold multiple inputs from user.
                 StringBuilder multiInput = new StringBuilder();
                 // Purge any extra characters in the scanner.
@@ -63,14 +82,14 @@ public class UDPClient
                 input = scanner.nextLine(); 
                 // Mutates the string, removing all white space around the input,
                 // then adding our own space to easily seperate the inputs.
-                multiInput.append(input.trim()).append(" ");
+                multiInput.append(input.trim()).append(":");
                 // Purge any extra characters in the scanner.
                 input = scanner.nextLine(); 
                 // Prompt user.
                 System.out.println("Customer Pin Number:");
                 input = scanner.nextLine(); 
                 // Appends the pin to the end of the 
-                multiInput.append(input.trim());
+                multiInput.append(input.trim()).append(":").append(travelMode);
                 // Convert string to bytes
                 m = multiInput.toString().getBytes();
                 // Packet prepared to transmit

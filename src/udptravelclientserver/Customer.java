@@ -74,6 +74,10 @@ public class Customer implements Serializable {
         return totalCost;
     }
     
+    public void increaseTravels() {
+        this.numberOfTravels++;
+    }
+    
     @Override
     public String toString() {
         return String.format("Customer [ \n\tCustomer Client ID: %s\n\tCustomer Pin Number: %d\n\tCustomer is currently travelling: %s\n\tNumber of Travels: %d\n\tTotal Cost: $%.2f\n]\n", 

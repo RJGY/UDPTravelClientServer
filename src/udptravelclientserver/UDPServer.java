@@ -29,8 +29,11 @@ public class UDPServer
     
     public static void main(String args[])
     {
+        Timer tm = new Timer(); // Using timer from util package
         UDPServer server = new UDPServer();
         server.loadCustomers();
+        // Schedule timer to write to file after start interval and repeat every interval
+        tm.schedule(new WriteToFile(server.customerList), WriteToFile.START_INTERVAL, WriteToFile.INTERVAL);
     	DatagramSocket aSocket = null;              // DatagramSocket declared and initalised.
 	try {
             aSocket = new DatagramSocket(SERVER_PORT);     //DatagramSocket assigned with port number.
@@ -43,12 +46,31 @@ public class UDPServer
                 DatagramPacket request = new DatagramPacket(buffer, buffer.length);
                 //receive
                 aSocket.receive(request);
-                //remove trailling spaces
-                System.out.println("Client Request: " + new String(request.getData()).trim());
+                // Store message.
+                String message = new String(request.getData());
+                // Print received message.
+                System.out.println("Client Request: " + message);
+                
+                // Error handling for incorrect input regarding too many colons.
+                if(message.split(":").length != 3) {
+                    System.out.println("Error: Received incorrect input.");
+                    continue;
+                }
+                
+                // TODO: FINISH REST OF HANDLING.
+                String replyString = "";
+                if(server.customerLogin(message)) {
+                    
+                } else if(server.customerLogin(message) == null) {
+                    
+                } else {
+                    
+                }
+                
                 //packet prepared to transmit
-                DatagramPacket reply = new DatagramPacket(request.getData(), request.getLength(),request.getAddress(), request.getPort());
-                //send
-                aSocket.send(reply);
+                DatagramPacket replyPacket = new DatagramPacket(replyString.getBytes(), replyString.getBytes().length, request.getAddress(), request.getPort());
+                //send packet
+                aSocket.send(replyPacket);
                 //clear buffer for next rquest
                 Arrays.fill(buffer, (byte)0);
             }//end of while loop
@@ -61,6 +83,7 @@ public class UDPServer
         }
         finally {
             if(aSocket != null) aSocket.close();
+            System.out.println("Closing Server. Goodbye!");
         }
     } // end of main
     
@@ -82,9 +105,9 @@ public class UDPServer
     } // end of function
     
     // Function returns a customer from the id.
-    public Customer searchCustomers(String customerID) {
+    public Customer searchCustomer(String message) {
         for(Customer customer : customerList) { 
-            if(customer.getClientID().equals(customerID)) { 
+            if(customer.getClientID().equals(message.split(":")[0])) { 
                 return customer;
             }
         }
@@ -95,13 +118,62 @@ public class UDPServer
     // Function returns a boolean from the id and pin. If the customer id cant be found,
     // return null so because there is no corresponding customer.
     // If the customer id is found but an incorrect pin is received, 
-    public Boolean customerLogin(String customerID, int pinNumber) {
+    public Boolean customerLogin(String message) {
         for(Customer customer : customerList) { 
-            if(customer.getClientID().equals(customerID)) { 
-                return customer.getPinNumber() == pinNumber;
+            if(customer.getClientID().equals(message.split(":")[0])) { 
+                return customer.getPinNumber() == Integer.parseInt(message.split(":")[1]);
             }
         }
         // Cannot find customer, returning null.
+        return null;
+    }
+    
+    // Function which sets that the customer is getting on.
+    public Boolean customerGetOn(String message) {
+        for(int i = 0; i < customerList.size(); i++) {
+            Customer customer = customerList.get(i);
+            if(customer.getClientID().equals(message.split(":")[0])) {
+                if(!customer.getStatus()) {
+                    // Customer can board.
+                    customer.setStatus(true);
+                    return true;
+                } else {
+                    // Customer cannot board.
+                    // Error handling for unable to board.
+                    System.out.println("Error: Customer is already signed in!");
+                    return false;
+                }
+            }
+        }
+        // Cannot find customer.
+        System.out.println("Customer not found.");
+        return null;
+    }
+    
+    
+    // Function which sets that the customer is getting on.
+    public Boolean customerGetOff(String message) {
+        for(int i = 0; i < customerList.size(); i++) {
+            Customer customer = customerList.get(i);
+            if(customer.getClientID().equals(message.split(":")[0])) {
+                if(customer.getStatus()) {
+                    // Customer can board.
+                    customer.setStatus(false);
+                    // Add one to total trips.
+                    customer.increaseTravels();
+                    // and calculate their total cost.
+                    customer.calculateCost();
+                    return true;
+                } else {
+                    // Customer cannot board.
+                    // Error handling for unable to board.
+                    System.out.println("Error: Customer is not signed in!");
+                    return false;
+                }
+            }
+        }
+        // Cannot find customer.
+        System.out.println("Customer not found.");
         return null;
     }
 } // end of class
