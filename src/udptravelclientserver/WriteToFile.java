@@ -7,6 +7,7 @@ package udptravelclientserver;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.TimerTask;
 import java.util.Timer;
@@ -16,16 +17,19 @@ import java.util.Timer;
  */
 public class WriteToFile extends TimerTask {
 
-    private PrintWriter prn = null;
-
-    public static void main(String args[])
-    {
-        int interval = 2000; // Print to file every 2 minutes 120000
-
-        Timer tm = new Timer(); // using timer from util package
-
-        //schedule timer to write to file after interval and repeat every interval
-        tm.schedule(new WriteToFile(), interval, interval);
+    private PrintWriter printer = null;
+    private String binaryFileName;
+    private ArrayList<Customer> customerList;
+    private ObjectOutputStream out;
+    private static final int INTERVAL = 10000; // Print to file every 2 minutes 120000 milliseconds.
+    private static final int START_INTERVAL = 1000; // Start after 1 second.
+    private Timer tm = new Timer(); // Using timer from util package
+    
+    public WriteToFile(ArrayList<Customer> customerList) {
+        this.customerList = customerList;
+        
+        // Schedule timer to write to file after start interval and repeat every interval
+        tm.schedule(new WriteToFile(customerList), START_INTERVAL, INTERVAL);
     }
     
     //this method is called automatically when the task is scheduled
@@ -33,7 +37,7 @@ public class WriteToFile extends TimerTask {
     public void run() {
         try {
             // assign PrintWriter instance to a file names SystemRecord.txt to be opened in append mode
-            prn = new PrintWriter(new FileOutputStream(new File("SystemRecord.txt"), true )); /* append = true */
+            printer = new PrintWriter(new FileOutputStream(new File("SystemRecord.txt"), true )); /* append = true */
             //Read system date
             Date date = new Date();
             //Date formatter
@@ -43,11 +47,11 @@ public class WriteToFile extends TimerTask {
             // Display on the screen
             System.out.println( "Current time of the day using Date - 12 hour format: " + dateString);
             //Write the same contents to the file
-            prn.println("Current time of the day using Date - 12 hour format: " + dateString);
+            printer.println("Current time of the day using Date - 12 hour format: " + dateString);
             //close the file
-            prn.close();
+            printer.close();
             // Assign printer to null for garbage collection.
-            prn = null;
+            printer = null;
         } // end of try block
         catch(IOException ex) { //exception handling for file handling
             ex.printStackTrace();

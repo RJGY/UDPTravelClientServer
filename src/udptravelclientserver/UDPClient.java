@@ -28,31 +28,59 @@ import java.util.*;
 
 public class UDPClient
 {
+    // port number for the process to listen at.
+    private static final int SERVER_PORT = 6789;
+    
+    // host address designated to localhost
+    private static final String SERVER_ADDRESS = "localhost";
+    
     public static void main(String args[])
     {
-
         DatagramSocket aSocket = null;          // DatagramSocket declared and initalised.
         try {
             aSocket = new DatagramSocket();     //DatagramSocket assigned.
-            Scanner sa=new Scanner(System.in);  // Scanner instance assigned.
-            //host address designated to localhost
-            InetAddress aHost = InetAddress.getByName("localhost");
+            Scanner scanner = new Scanner(System.in);  // Scanner instance assigned.
+            
+            InetAddress aHost = InetAddress.getByName(SERVER_ADDRESS);
             // byte array used to send and receive a maximum of 1000 characters.
             byte [] m = new byte[1000];
-            // port number for the process to listen at.
-            int serverPort = 6789;
-            String input = ""; //variable to hold user input.
-            //keep chatting until terminiated with exit from the user
-            while(!input.equalsIgnoreCase("exit")) {
-                System.out.println("Enter a message:");
-                input = sa.nextLine();
-                //convert string to bytes
-                m = input.getBytes();
-                //packet prepared to transmit
-                DatagramPacket request = new DatagramPacket(m,m.length, aHost, serverPort);
+            // variable to hold user input.
+            String input = ""; 
+            // keep chatting until terminiated with 3 from the user
+            while(true) {
+                System.out.println("****Travel Kiosk****\n\t1:IN\n\t2:OUT\n\t3:EXIT\nEnter: ");
+                input = scanner.nextLine();
+                // Check if user breaking out of loop
+                if(input.equalsIgnoreCase("3")) {
+                    break;
+                }
+                // Variable to mutate and hold multiple inputs from user.
+                StringBuilder multiInput = new StringBuilder();
+                // Purge any extra characters in the scanner.
+                input = scanner.nextLine(); 
+                // Prompt user.
+                System.out.println("Customer Client ID:");
+                input = scanner.nextLine(); 
+                // Mutates the string, removing all white space around the input,
+                // then adding our own space to easily seperate the inputs.
+                multiInput.append(input.trim()).append(" ");
+                // Purge any extra characters in the scanner.
+                input = scanner.nextLine(); 
+                // Prompt user.
+                System.out.println("Customer Pin Number:");
+                input = scanner.nextLine(); 
+                // Appends the pin to the end of the 
+                multiInput.append(input.trim());
+                // Convert string to bytes
+                m = multiInput.toString().getBytes();
+                // Packet prepared to transmit
+                DatagramPacket request = new DatagramPacket(m, m.length, aHost, SERVER_PORT);
+                // Transmit packet.
                 aSocket.send(request);
-                //packet prepared to receive
-                DatagramPacket reply = new DatagramPacket(m, m.length);aSocket.receive(reply);
+                // Prepare packet to receive
+                DatagramPacket reply = new DatagramPacket(m, m.length);
+                // Recieve reply.
+                aSocket.receive(reply);
                 // remove trailling empty spaces from the message of 1000 characters
                 System.out.println("Server Response: " + new String(reply.getData()).trim());
             }//end of while
@@ -62,7 +90,9 @@ public class UDPClient
         } catch (IOException e) {
             System.out.println("IO: " + e.getMessage());
         } finally {
+            // Close connection to server.
             if(aSocket != null) aSocket.close();
+            System.out.println("Exitting System, Goodbye!");
         }
     } // end of main
 } //  end of class

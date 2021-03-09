@@ -70,7 +70,6 @@ public class UDPServer
             Scanner myReader = new Scanner(myObj);
             while (myReader.hasNextLine()) {
                 String data = myReader.nextLine();
-                
                 Customer newCustomer = new Customer(data.split(" ")[0], Integer.parseInt(data.split(" ")[1]), false, 0);
                 customerList.add(newCustomer);
                 System.out.println(newCustomer);
@@ -81,5 +80,29 @@ public class UDPServer
             e.printStackTrace();
         }
     } // end of function
+    
+    // Function returns a customer from the id.
+    public Customer searchCustomers(String customerID) {
+        for(Customer customer : customerList) { 
+            if(customer.getClientID().equals(customerID)) { 
+                return customer;
+            }
+        }
+        // Cannot find customer, returning null.
+        return null;
+    } //  end of function
+    
+    // Function returns a boolean from the id and pin. If the customer id cant be found,
+    // return null so because there is no corresponding customer.
+    // If the customer id is found but an incorrect pin is received, 
+    public Boolean customerLogin(String customerID, int pinNumber) {
+        for(Customer customer : customerList) { 
+            if(customer.getClientID().equals(customerID)) { 
+                return customer.getPinNumber() == pinNumber;
+            }
+        }
+        // Cannot find customer, returning null.
+        return null;
+    }
 } // end of class
 
