@@ -63,6 +63,7 @@ public class UDPServer
                     if(message.split(":")[2].equals("IN")) {
                         if(server.customerGetOn(message)) {
                             // successfully boarded
+                            
                         }
                         else if (server.customerGetOn(message) == null){
                             // cant find customer
@@ -169,7 +170,7 @@ public class UDPServer
             }
         }
         // Cannot find customer.
-        System.out.println("Customer not found.");
+        System.out.println("Error: Customer not found.");
         return null;
     }
     
@@ -196,7 +197,7 @@ public class UDPServer
             }
         }
         // Cannot find customer.
-        System.out.println("Customer not found.");
+        System.out.println("Error: Customer not found.");
         return null;
     }
 } // end of class
