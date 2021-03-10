@@ -60,11 +60,34 @@ public class UDPServer
                 // TODO: FINISH REST OF HANDLING.
                 String replyString = "";
                 if(server.customerLogin(message)) {
-                    
+                    if(message.split(":")[2].equals("IN")) {
+                        if(server.customerGetOn(message)) {
+                            // successfully boarded
+                        }
+                        else if (server.customerGetOn(message) == null){
+                            // cant find customer
+                        }
+                        else {
+                            // already on board
+                        }
+                    }
+                    else {
+                        if(server.customerGetOff(message)) {
+                            // successfully unloaded
+                        }
+                        else if (server.customerGetOff(message) == null){
+                            // cant find customer
+                        }
+                        else {
+                            // was never on board.
+                        }
+                    }
                 } else if(server.customerLogin(message) == null) {
-                    
+                    // Cannot find customer.
+                    replyString = "Error: Customer not found.";
                 } else {
-                    
+                    // Customer found but incorrect pin/client id
+                    replyString = "Error: Incorrect pin number.";
                 }
                 
                 //packet prepared to transmit
