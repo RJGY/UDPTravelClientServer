@@ -183,17 +183,16 @@ public class UDPServer
                     customer.increaseTravels();
                     // and calculate their total cost.
                     customer.calculateCost();
+                    System.out.printf("%s/t%d\t%f\n", customer.getClientID(), customer.getNumberOfTravels(), customer.getTotalCost());
                     return true;
                 } else {
                     // Customer cannot board.
                     // Error handling for unable to board.
-                    System.out.println("Error: Customer is not signed in!");
                     return false;
                 }
             }
         }
         // Cannot find customer.
-        System.out.println("Error: Customer not found.");
         return null;
     } // end of function.
 } // end of class

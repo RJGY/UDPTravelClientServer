@@ -93,14 +93,14 @@ public class UDPClient
                 DatagramPacket request = new DatagramPacket(m, m.length, aHost, SERVER_PORT);
                 // Transmit packet.
                 aSocket.send(request);
-                //clear buffer for next rquest
-                Arrays.fill(buffer, (byte)0);
                 // Prepare packet to receive
                 DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
                 // Recieve reply.
                 aSocket.receive(reply);
                 // remove trailling empty spaces from the message of 1000 characters
                 System.out.println("Server Response: " + new String(reply.getData()).trim());
+                //clear buffer for next rquest
+                Arrays.fill(buffer, (byte)0);
             }//end of while
         }//end of try block
         catch (SocketException e) { // Socket exception handling.

@@ -34,8 +34,8 @@ public class WriteToFile extends TimerTask {
     @Override
     public void run() {
         try {
-            // assign PrintWriter instance to a file names SystemRecord.txt to be opened in append mode
-            printer = new PrintWriter(new FileOutputStream(new File(binaryFileName), false )); /* append = true */
+            // assign PrintWriter instance to a file names Member.dat to be opened in write mode
+            printer = new PrintWriter(new FileOutputStream(new File(binaryFileName), false )); /* append = false */
 
             // TODO: ADD WRITING TO BINARY FILE.
             ObjectOutputStream out = new ObjectOutputStream(bos);
