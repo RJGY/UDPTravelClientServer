@@ -44,6 +44,7 @@ public class UDPClient
             InetAddress aHost = InetAddress.getByName(SERVER_ADDRESS);
             // byte array used to send and receive a maximum of 1000 characters.
             byte [] m = new byte[1000];
+            byte[] buffer = new byte[1000];         // byte array
             // variable to hold user input.
             String input = ""; 
             // variable to hold in or out
@@ -53,7 +54,7 @@ public class UDPClient
             // keep chatting until terminiated with 3 from the user
             while(true) {
                 while(true) {
-                    System.out.println("****Travel Kiosk****\n\t1:IN\n\t2:OUT\n\t3:EXIT\nEnter: ");
+                    System.out.println("****Travel Kiosk****\n\t1:IN\n\t2:OUT\n\t3:EXIT\nEnter: "); 
                     input = scanner.nextLine();
                     // Check if user breaking out of loop
                     if (input.equalsIgnoreCase("1")) {
@@ -75,16 +76,12 @@ public class UDPClient
                 
                 // Variable to mutate and hold multiple inputs from user.
                 StringBuilder multiInput = new StringBuilder();
-                // Purge any extra characters in the scanner.
-                input = scanner.nextLine(); 
                 // Prompt user.
                 System.out.println("Customer Client ID:");
                 input = scanner.nextLine(); 
                 // Mutates the string, removing all white space around the input,
                 // then adding our own space to easily seperate the inputs.
                 multiInput.append(input.trim()).append(":");
-                // Purge any extra characters in the scanner.
-                input = scanner.nextLine(); 
                 // Prompt user.
                 System.out.println("Customer Pin Number:");
                 input = scanner.nextLine(); 
@@ -96,8 +93,10 @@ public class UDPClient
                 DatagramPacket request = new DatagramPacket(m, m.length, aHost, SERVER_PORT);
                 // Transmit packet.
                 aSocket.send(request);
+                //clear buffer for next rquest
+                Arrays.fill(buffer, (byte)0);
                 // Prepare packet to receive
-                DatagramPacket reply = new DatagramPacket(m, m.length);
+                DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
                 // Recieve reply.
                 aSocket.receive(reply);
                 // remove trailling empty spaces from the message of 1000 characters

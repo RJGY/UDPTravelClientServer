@@ -47,52 +47,48 @@ public class UDPServer
                 //receive
                 aSocket.receive(request);
                 // Store message.
-                String message = new String(request.getData());
+                String message = new String(request.getData()).trim();
                 // Print received message.
                 System.out.println("Client Request: " + message);
-                
+                System.out.println("Client Request: " + message.split(":")[2]);
                 // Error handling for incorrect input regarding too many colons.
                 if(message.split(":").length != 3) {
-                    System.out.println("Error: Received incorrect input.");
+                    System.out.println("Error - Received incorrect input.");
                     continue;
-                }
+                } // end if
                 
-                // TODO: FINISH REST OF HANDLING.
                 String replyString = "";
                 if(server.customerLogin(message)) {
-                    if(message.split(":")[2].equals("IN")) {
+                    if(message.split(":")[2].trim().equalsIgnoreCase("in")) {
                         if(server.customerGetOn(message)) {
-                            // successfully boarded
-                            
-                        }
-                        else if (server.customerGetOn(message) == null){
-                            // cant find customer
-                        }
-                        else {
-                            // already on board
-                        }
+                            // successfully boarded customer
+                            replyString = "Success - Welcome";
+                        } else {
+                            // customer already on board
+                            replyString = "Error - Customer is already signed in.";
+                        } // end if
                     }
-                    else {
+                    else if(message.split(":")[2].trim().equalsIgnoreCase("out")) {
                         if(server.customerGetOff(message)) {
-                            // successfully unloaded
-                        }
-                        else if (server.customerGetOff(message) == null){
-                            // cant find customer
-                        }
-                        else {
-                            // was never on board.
+                            // successfully unloaded customer
+                            replyString = "Success - Have a good day";
+                        } else {
+                            // customer was not on board.
+                            replyString = "Error - Customer is already signed out.";
                         }
                     }
                 } else if(server.customerLogin(message) == null) {
                     // Cannot find customer.
-                    replyString = "Error: Customer not found.";
+                    replyString = "5Error - Customer not found.";
                 } else {
                     // Customer found but incorrect pin/client id
-                    replyString = "Error: Incorrect pin number.";
-                }
+                    replyString = "6Error - Incorrect pin number.";
+                } // end if
                 
+                System.out.println("Reply String: " + replyString);
+                byte[] m = replyString.getBytes();
                 //packet prepared to transmit
-                DatagramPacket replyPacket = new DatagramPacket(replyString.getBytes(), replyString.getBytes().length, request.getAddress(), request.getPort());
+                DatagramPacket replyPacket = new DatagramPacket(m, m.length, request.getAddress(), request.getPort());
                 //send packet
                 aSocket.send(replyPacket);
                 //clear buffer for next rquest
@@ -131,7 +127,7 @@ public class UDPServer
     // Function returns a customer from the id.
     public Customer searchCustomer(String message) {
         for(Customer customer : customerList) { 
-            if(customer.getClientID().equals(message.split(":")[0])) { 
+            if(customer.getClientID().equalsIgnoreCase(message.split(":")[0])) { 
                 return customer;
             }
         }
@@ -144,7 +140,7 @@ public class UDPServer
     // If the customer id is found but an incorrect pin is received, 
     public Boolean customerLogin(String message) {
         for(Customer customer : customerList) { 
-            if(customer.getClientID().equals(message.split(":")[0])) { 
+            if(customer.getClientID().equalsIgnoreCase(message.split(":")[0])) { 
                 return customer.getPinNumber() == Integer.parseInt(message.split(":")[1]);
             }
         }
@@ -156,7 +152,7 @@ public class UDPServer
     public Boolean customerGetOn(String message) {
         for(int i = 0; i < customerList.size(); i++) {
             Customer customer = customerList.get(i);
-            if(customer.getClientID().equals(message.split(":")[0])) {
+            if(customer.getClientID().equalsIgnoreCase(message.split(":")[0])) {
                 if(!customer.getStatus()) {
                     // Customer can board.
                     customer.setStatus(true);
@@ -172,14 +168,14 @@ public class UDPServer
         // Cannot find customer.
         System.out.println("Error: Customer not found.");
         return null;
-    }
+    } // End of function.
     
     
     // Function which sets that the customer is getting on.
     public Boolean customerGetOff(String message) {
         for(int i = 0; i < customerList.size(); i++) {
             Customer customer = customerList.get(i);
-            if(customer.getClientID().equals(message.split(":")[0])) {
+            if(customer.getClientID().equalsIgnoreCase(message.split(":")[0])) {
                 if(customer.getStatus()) {
                     // Customer can board.
                     customer.setStatus(false);
@@ -199,6 +195,6 @@ public class UDPServer
         // Cannot find customer.
         System.out.println("Error: Customer not found.");
         return null;
-    }
+    } // end of function.
 } // end of class
 

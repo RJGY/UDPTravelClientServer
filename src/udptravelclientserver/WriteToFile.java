@@ -20,7 +20,8 @@ public class WriteToFile extends TimerTask {
     private PrintWriter printer = null;
     private static final String binaryFileName = "Member.dat";
     private ArrayList<Customer> customerList;
-    private ObjectOutputStream out;
+    private ByteArrayOutputStream bos = new ByteArrayOutputStream();
+    
     public static final int INTERVAL = 10000; // Print to file every 2 minutes 120000 milliseconds.
     public static final int START_INTERVAL = 1000; // Start after 1 second.
     private Timer tm = new Timer(); // Using timer from util package
@@ -34,10 +35,18 @@ public class WriteToFile extends TimerTask {
     public void run() {
         try {
             // assign PrintWriter instance to a file names SystemRecord.txt to be opened in append mode
-            printer = new PrintWriter(new FileOutputStream(new File(binaryFileName), true )); /* append = true */
+            printer = new PrintWriter(new FileOutputStream(new File(binaryFileName), false )); /* append = true */
 
             // TODO: ADD WRITING TO BINARY FILE.
-            
+            ObjectOutputStream out = new ObjectOutputStream(bos);
+            for (Customer customer : customerList) {
+                out.writeObject(customer);
+                out.flush();
+                byte[] objectBytes = bos.toByteArray();
+                for (Byte objectByte : objectBytes) {
+                    printer.write(objectByte);
+                }
+            }
             //close the file
             printer.close();
             // Assign printer to null for garbage collection.
