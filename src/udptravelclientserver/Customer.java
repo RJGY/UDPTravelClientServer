@@ -67,7 +67,7 @@ public class Customer implements Serializable {
     }
     
     public void calculateCost() {
-        totalCost = Math.min((numberOfTravels - NUMBER_OF_FREE_TRAVELS) * 3, 0);
+        totalCost = Math.max((numberOfTravels - NUMBER_OF_FREE_TRAVELS) * 3, 0);
     }
     
     public double getTotalCost() {

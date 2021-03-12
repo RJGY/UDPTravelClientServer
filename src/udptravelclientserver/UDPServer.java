@@ -50,7 +50,6 @@ public class UDPServer
                 String message = new String(request.getData()).trim();
                 // Print received message.
                 System.out.println("Client Request: " + message);
-                System.out.println("Client Request: " + message.split(":")[2]);
                 // Error handling for incorrect input regarding too many colons.
                 if(message.split(":").length != 3) {
                     System.out.println("Error - Received incorrect input.");
@@ -183,7 +182,7 @@ public class UDPServer
                     customer.increaseTravels();
                     // and calculate their total cost.
                     customer.calculateCost();
-                    System.out.printf("%s/t%d\t%f\n", customer.getClientID(), customer.getNumberOfTravels(), customer.getTotalCost());
+                    System.out.printf("%s\t%d\t%.2f\n", customer.getClientID(), customer.getNumberOfTravels(), customer.getTotalCost());
                     return true;
                 } else {
                     // Customer cannot board.

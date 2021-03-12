@@ -6,11 +6,7 @@
 package udptravelclientserver;
 
 import java.io.*;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.TimerTask;
-import java.util.Timer;
+import java.util.*;
 /**
  *
  * @author Alerz
@@ -18,10 +14,8 @@ import java.util.Timer;
 public class WriteToFile extends TimerTask {
 
     private PrintWriter printer = null;
-    private static final String binaryFileName = "Member.dat";
+    private static final String BINARY_FILE_NAME = "Member.dat";
     private ArrayList<Customer> customerList;
-    private ByteArrayOutputStream bos = new ByteArrayOutputStream();
-    
     public static final int INTERVAL = 10000; // Print to file every 2 minutes 120000 milliseconds.
     public static final int START_INTERVAL = 1000; // Start after 1 second.
     private Timer tm = new Timer(); // Using timer from util package
@@ -35,22 +29,16 @@ public class WriteToFile extends TimerTask {
     public void run() {
         try {
             // assign PrintWriter instance to a file names Member.dat to be opened in write mode
-            printer = new PrintWriter(new FileOutputStream(new File(binaryFileName), false )); /* append = false */
-
-            // TODO: ADD WRITING TO BINARY FILE.
-            ObjectOutputStream out = new ObjectOutputStream(bos);
+            FileOutputStream fos = new FileOutputStream(new File(BINARY_FILE_NAME));
+            printer = new PrintWriter(fos, false); /* append = false */
+            ObjectOutputStream out;
+            out = new ObjectOutputStream(fos);
             for (Customer customer : customerList) {
                 out.writeObject(customer);
                 out.flush();
-                byte[] objectBytes = bos.toByteArray();
-                for (Byte objectByte : objectBytes) {
-                    printer.write(objectByte);
-                }
             }
             //close the file
             printer.close();
-            // Assign printer to null for garbage collection.
-            printer = null;
         } // end of try block
         catch(IOException ex) { //exception handling for file handling
             ex.printStackTrace();
