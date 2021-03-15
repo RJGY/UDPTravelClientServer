@@ -24,7 +24,8 @@ public class WriteToFile extends TimerTask {
         this.customerList = customerList;
     }
     
-    // This method is called automatically when the task is scheduled
+    // This method is called automatically when the task is scheduled.
+    // Function that writes the data of the customerList to binary file
     @Override
     public void run() {
         try {
@@ -33,15 +34,16 @@ public class WriteToFile extends TimerTask {
             printer = new PrintWriter(fos, false); /* append = false */
             ObjectOutputStream out;
             out = new ObjectOutputStream(fos);
+            // Loop through each customer and write.
             for (Customer customer : customerList) {
                 out.writeObject(customer);
                 out.flush();
-            }
+            } // end for
             //close the file
             printer.close();
         } // end of try block
         catch(IOException ex) { //exception handling for file handling
             ex.printStackTrace();
         }
-    }
-}
+    } // end function
+} // end class

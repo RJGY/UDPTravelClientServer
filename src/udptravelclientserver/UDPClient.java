@@ -34,6 +34,9 @@ public class UDPClient
     // host address designated to localhost
     private static final String SERVER_ADDRESS = "localhost";
     
+    // timeout length 
+    private static final int TIMEOUT_LENGTH = 10000;
+    
     public static void main(String args[])
     {
         DatagramSocket aSocket = null;          // DatagramSocket declared and initalised.
@@ -43,7 +46,7 @@ public class UDPClient
             
             InetAddress aHost = InetAddress.getByName(SERVER_ADDRESS);
             // byte array used to send and receive a maximum of 1000 characters.
-            byte [] m = new byte[1000];
+            byte[] m = new byte[1000];
             byte[] buffer = new byte[1000];         // byte array
             // variable to hold user input.
             String input = ""; 
@@ -69,7 +72,6 @@ public class UDPClient
                         loop = false;
                         break;
                     }
-                    
                 }
                 // break out of loop if 3 is pressed
                 if (!loop) break;
@@ -89,17 +91,28 @@ public class UDPClient
                 multiInput.append(input.trim()).append(":").append(travelMode);
                 // Convert string to bytes
                 m = multiInput.toString().getBytes();
-                // Packet prepared to transmit
+                // Packet prepared to transmit message.
                 DatagramPacket request = new DatagramPacket(m, m.length, aHost, SERVER_PORT);
-                // Transmit packet.
+                // Transmit message packet.
                 aSocket.send(request);
-                // Prepare packet to receive
-                DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
-                // Recieve reply.
-                aSocket.receive(reply);
-                // remove trailling empty spaces from the message of 1000 characters
-                System.out.println("Server Response: " + new String(reply.getData()).trim());
-                //clear buffer for next rquest
+                // set the timeout to 10 seconds
+                aSocket.setSoTimeout(TIMEOUT_LENGTH);   
+                // code in try statement incase timeout is hit.
+                try {
+                    // Prepare packet to receive using buffer, a 1000 byte array.
+                    DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
+                    // Recieve reply.
+                    aSocket.receive(reply);
+                    // Remove trailling empty spaces from the message of 1000 characters
+                    System.out.println("Server Response: " + new String(reply.getData()).trim());
+                } catch (SocketTimeoutException e) {
+                    // Timeout reached. Closing connection.
+                    System.out.println("Server cannot be reached. Exitting.\n" + e);
+                    aSocket.close();
+                    return;
+                }
+                
+                // Clear buffer for next rquest
                 Arrays.fill(buffer, (byte)0);
             }//end of while
         }//end of try block

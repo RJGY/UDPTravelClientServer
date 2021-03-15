@@ -106,6 +106,7 @@ public class UDPServer
         }
     } // end of main
     
+    // Function that loads customer from text file.
     public void loadCustomers() {
         try {
             File myObj = new File(MEMBER_TEXT_FILE_NAME);
@@ -123,17 +124,6 @@ public class UDPServer
         }
     } // end of function
     
-    // Function returns a customer from the id.
-    public Customer searchCustomer(String message) {
-        for(Customer customer : customerList) { 
-            if(customer.getClientID().equalsIgnoreCase(message.split(":")[0])) { 
-                return customer;
-            }
-        }
-        // Cannot find customer, returning null.
-        return null;
-    } //  end of function
-    
     // Function returns a boolean from the id and pin. If the customer id cant be found,
     // return null so because there is no corresponding customer.
     // If the customer id is found but an incorrect pin is received, 
@@ -148,6 +138,8 @@ public class UDPServer
     }
     
     // Function which sets that the customer is getting on.
+    // returns true if successful
+    // returns false if not
     public Boolean customerGetOn(String message) {
         for(int i = 0; i < customerList.size(); i++) {
             Customer customer = customerList.get(i);
@@ -171,27 +163,31 @@ public class UDPServer
     
     
     // Function which sets that the customer is getting on.
+    // returns true if successful
+    // returns false if not
     public Boolean customerGetOff(String message) {
         for(int i = 0; i < customerList.size(); i++) {
             Customer customer = customerList.get(i);
             if(customer.getClientID().equalsIgnoreCase(message.split(":")[0])) {
                 if(customer.getStatus()) {
-                    // Customer can board.
+                    // Customer can get off. 
+                    // Customer board status toggled off.
                     customer.setStatus(false);
-                    // Add one to total trips.
+                    // Add one to customers total trips.
                     customer.increaseTravels();
-                    // and calculate their total cost.
+                    // Calculate total cost.
                     customer.calculateCost();
+                    // Print to server.
                     System.out.printf("%s\t%d\t%.2f\n", customer.getClientID(), customer.getNumberOfTravels(), customer.getTotalCost());
                     return true;
                 } else {
                     // Customer cannot board.
-                    // Error handling for unable to board.
+                    // Return false.
                     return false;
                 }
             }
         }
-        // Cannot find customer.
+        // Cannot find customer. Return null
         return null;
     } // end of function.
 } // end of class
