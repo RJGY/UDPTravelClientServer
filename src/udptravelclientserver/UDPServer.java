@@ -37,10 +37,11 @@ public class UDPServer
     	DatagramSocket aSocket = null;              // DatagramSocket declared and initalised.
 	try {
             aSocket = new DatagramSocket(SERVER_PORT);     //DatagramSocket assigned with port number.
-            byte[] buffer = new byte[1000];         // byte array
+            byte[] buffer = new byte[1000];         // Byte array
             
             // infinite loop to listen to clients
             System.out.println("UDP Server running...");
+            System.out.printf("%s\t%s\t%s\n", "Customer ID", "No. Travels", "Total Cost");
             while(true) {
                 //packet prepared to receive
                 DatagramPacket request = new DatagramPacket(buffer, buffer.length);
@@ -48,8 +49,6 @@ public class UDPServer
                 aSocket.receive(request);
                 // Store message.
                 String message = new String(request.getData()).trim();
-                // Print received message.
-                System.out.println("Client Request: " + message);
                 // Error handling for incorrect input regarding too many colons.
                 if(message.split(":").length != 3) {
                     System.out.println("Error - Received incorrect input.");
@@ -76,15 +75,17 @@ public class UDPServer
                             replyString = "Error - Customer is already signed out.";
                         }
                     }
-                } else if(server.customerLogin(message) == null) {
-                    // Cannot find customer.
-                    replyString = "5Error - Customer not found.";
                 } else {
-                    // Customer found but incorrect pin/client id
-                    replyString = "6Error - Incorrect pin number.";
+                    // customerLogin returned false.
+                    // Need to tell if there is no customer or if incorrect pin.
+                    if (server.checkCustomerID(message)) {
+                        // Customer id exists.
+                        replyString = "Error - Incorrect Pin Number.";
+                    } else {
+                        replyString = "Error - Incorrect Customer ID.";
+                    }
                 } // end if
                 
-                System.out.println("Reply String: " + replyString);
                 byte[] m = replyString.getBytes();
                 //packet prepared to transmit
                 DatagramPacket replyPacket = new DatagramPacket(m, m.length, request.getAddress(), request.getPort());
@@ -115,7 +116,6 @@ public class UDPServer
                 String data = myReader.nextLine();
                 Customer newCustomer = new Customer(data.split(" ")[0], Integer.parseInt(data.split(" ")[1]), false, 0);
                 customerList.add(newCustomer);
-                System.out.println(newCustomer);
             } // End while
             myReader.close();
         } catch (FileNotFoundException e) {
@@ -129,13 +129,28 @@ public class UDPServer
     // If the customer id is found but an incorrect pin is received, 
     public Boolean customerLogin(String message) {
         for(Customer customer : customerList) { 
-            if(customer.getClientID().equalsIgnoreCase(message.split(":")[0])) { 
-                return customer.getPinNumber() == Integer.parseInt(message.split(":")[1]);
+            if(customer.getClientID().equalsIgnoreCase(message.split(":")[0])) {
+                try {
+                    return customer.getPinNumber() == Integer.parseInt(message.split(":")[1]);
+                } catch (java.lang.NumberFormatException e) {
+                    return false;
+                }
             }
         }
-        // Cannot find customer, returning null.
-        return null;
+        // Cannot find customer, returning false.
+        return false;
     }
+    
+    public boolean checkCustomerID(String message) {
+        // Code below can do the whole function in one line.
+        // return customerList.stream().anyMatch((customer) -> (customer.getClientID().equalsIgnoreCase(message.split(":")[0])));
+        for(Customer customer : customerList) {
+            if(customer.getClientID().equalsIgnoreCase(message.split(":")[0])) { 
+                return true;
+            }
+        }
+        return false;
+    } 
     
     // Function which sets that the customer is getting on.
     // returns true if successful
@@ -178,7 +193,7 @@ public class UDPServer
                     // Calculate total cost.
                     customer.calculateCost();
                     // Print to server.
-                    System.out.printf("%s\t%d\t%.2f\n", customer.getClientID(), customer.getNumberOfTravels(), customer.getTotalCost());
+                    System.out.printf("%s\t\t%d\t\t$%.2f\n", customer.getClientID(), customer.getNumberOfTravels(), customer.getTotalCost());
                     return true;
                 } else {
                     // Customer cannot board.
