@@ -11,6 +11,18 @@ import java.util.*;
  *
  * @author Alerz
  */
+/**
+ *
+ * Author: Reese Gunardi
+ * File Name: WriteToFile.java
+ * Date: 15/3/2021
+ * Purpose:
+ * Writes our customerList to a binary file, persisting the data. This is accomplished
+ * through the use of Customer implementing serializable, allowing us to easily
+ * convert the class to binary. This function is attached to a timer, allowing
+ * it to be called at an interval.
+ * ******************************************************
+ */
 public class WriteToFile extends TimerTask {
 
     private PrintWriter printer = null;

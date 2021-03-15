@@ -11,7 +11,7 @@ package udptravelclientserver;
  *
  * Author: Reese Gunardi
  * File Name: UDPClient.java
- * Date: 20/02/2020
+ * Date: 15/3/2021
  * Purpose:
  * Java UDP sockets provide a connectionless communication between client and server.(similar to offline text messaging)
  * The client and server uses send and receive methods encapsulated by the socket to communicate with each other.

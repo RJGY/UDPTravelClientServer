@@ -1,9 +1,9 @@
 /**
  *
- * Author :Reese Gunardi
- * File Name:UDPServer.java
- * Date :20/02/2020
- * Purpose :
+ * Author: Reese Gunardi
+ * File Name: UDPServer.java
+ * Date: 15/3/2021
+ * Purpose:
  * Java UDP sockets provide a connectionless communication between client and server.(similar to offline text messaging)
  * The server sits in an infinite loop receiving messages from single/multiple clients and replies to them.
  * The client and server uses send and receive methods encapsulated by the socket to communicate with each other.
@@ -166,13 +166,11 @@ public class UDPServer
                 } else {
                     // Customer cannot board.
                     // Error handling for unable to board.
-                    System.out.println("Error: Customer is already signed in!");
                     return false;
                 }
             }
         }
         // Cannot find customer.
-        System.out.println("Error: Customer not found.");
         return null;
     } // End of function.
     

@@ -1,10 +1,10 @@
-/*
+/**
  *
  * Author: Reese Gunardi
  * File Name: Customer.java
- * Date: 20/2/2020
+ * Date: 15/3/2021
  * Purpose :
- * Customer class to be used in UDPServer.java
+ * Customer class to be used in UDPServer.java and WriteToFile
  */
 package udptravelclientserver;
 
