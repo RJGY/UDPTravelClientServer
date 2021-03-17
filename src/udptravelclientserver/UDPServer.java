@@ -127,7 +127,7 @@ public class UDPServer
     // Function returns a boolean from the id and pin. If the customer id cant be found,
     // return null so because there is no corresponding customer.
     // If the customer id is found but an incorrect pin is received, 
-    public Boolean customerLogin(String message) {
+    public boolean customerLogin(String message) {
         for(Customer customer : customerList) { 
             if(customer.getClientID().equalsIgnoreCase(message.split(":")[0])) {
                 try {
@@ -155,7 +155,7 @@ public class UDPServer
     // Function which sets that the customer is getting on.
     // returns true if successful
     // returns false if not
-    public Boolean customerGetOn(String message) {
+    public boolean customerGetOn(String message) {
         for(int i = 0; i < customerList.size(); i++) {
             Customer customer = customerList.get(i);
             if(customer.getClientID().equalsIgnoreCase(message.split(":")[0])) {
@@ -163,22 +163,18 @@ public class UDPServer
                     // Customer can board.
                     customer.setStatus(true);
                     return true;
-                } else {
-                    // Customer cannot board.
-                    // Error handling for unable to board.
-                    return false;
-                }
+                } 
             }
         }
         // Cannot find customer.
-        return null;
+        return false;
     } // End of function.
     
     
     // Function which sets that the customer is getting on.
     // returns true if successful
     // returns false if not
-    public Boolean customerGetOff(String message) {
+    public boolean customerGetOff(String message) {
         for(int i = 0; i < customerList.size(); i++) {
             Customer customer = customerList.get(i);
             if(customer.getClientID().equalsIgnoreCase(message.split(":")[0])) {
@@ -193,15 +189,11 @@ public class UDPServer
                     // Print to server.
                     System.out.printf("%s\t\t%d\t\t$%.2f\n", customer.getClientID(), customer.getNumberOfTravels(), customer.getTotalCost());
                     return true;
-                } else {
-                    // Customer cannot board.
-                    // Return false.
-                    return false;
-                }
+                } 
             }
         }
         // Cannot find customer. Return null
-        return null;
+        return false;
     } // end of function.
 } // end of class
 
